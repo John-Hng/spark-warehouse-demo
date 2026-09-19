@@ -9,14 +9,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kirk.warehouse.scheduler.WholeProcessScheduler.dates;
+import static com.kirk.warehouse.scheduler.WholeProcessScheduler.spark;
+
 public class Dws_User_Behavior_Day {
-    public static void main(String[] args) {
-        System.setProperty("HADOOP_USER_NAME","kirk");
-
-        SparkSession spark = SparkSessionUtil.getSession("dws");
-
-        List<String> dates = GenerateDateListUtil.generateDateList("2017-11-25", "2017-12-03");
-
+    public static void runFull (SparkSession spark,List<String> dates) {
         for (String dt : dates){
             System.out.println("开始处理分区：" + dt);
 
@@ -34,9 +31,18 @@ public class Dws_User_Behavior_Day {
             System.out.println(dt + "分区处理完成");
         }
 
-        spark.sql("select count(1) from dws.dws_user_behavior_day").show();
+    }
+    public static void main (String[] args) {
+        System.setProperty("HADOOP_USER_NAME","kirk");
 
-        spark.close();
+        try {
+            runFull(spark,dates);
+        } catch (Exception e) {
+            System.err.println("DWS 层用户宽表失败");
+            e.printStackTrace();
+        } finally {
+            spark.stop();
+        }
     }
 
 }

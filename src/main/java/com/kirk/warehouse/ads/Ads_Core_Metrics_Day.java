@@ -6,14 +6,11 @@ import org.apache.spark.sql.SparkSession;
 
 import java.util.List;
 
+import static com.kirk.warehouse.scheduler.WholeProcessScheduler.dates;
+import static com.kirk.warehouse.scheduler.WholeProcessScheduler.spark;
+
 public class Ads_Core_Metrics_Day {
-    public static void main(String[] args) {
-        System.setProperty("HADOOP_USER_NAME","kirk");
-
-        SparkSession spark = SparkSessionUtil.getSession("ads");
-
-        List<String> dates = GenerateDateListUtil.generateDateList("2017-11-25", "2017-12-03");
-
+    public static void runFull (SparkSession spark,List<String> dates) {
         for (String dt : dates){
             System.out.println("开始处理分区：" + dt);
 
@@ -32,9 +29,17 @@ public class Ads_Core_Metrics_Day {
 
             System.out.println(dt + "分区处理完成");
         }
+    }
+    public static void main (String[] args) {
+        System.setProperty("HADOOP_USER_NAME","kirk");
 
-        spark.sql("select count(1) from ads.ads_core_metrics_day").show();
-
-        spark.close();
+        try {
+            runFull(spark,dates);
+        } catch (Exception e) {
+            System.err.println("ADS 层核心指标失败");
+            e.printStackTrace();
+        } finally {
+            spark.stop();
+        }
     }
 }

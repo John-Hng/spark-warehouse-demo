@@ -8,7 +8,7 @@ import java.util.List;
 public final class GenerateDateListUtil {
     private GenerateDateListUtil(){}
 
-    public static final DateTimeFormatter DT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter DT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static final List<String> generateDateList(String start, String end){
         List<String> dates = new ArrayList<String>();
