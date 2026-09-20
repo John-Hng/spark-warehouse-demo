@@ -11,6 +11,9 @@ public final class SparkSessionUtil {
                 .appName(appName)
                 .master("yarn")
                 .enableHiveSupport()
+                .config("spark.hadoop.hive.exec.dynamic.partition", "true")
+                .config("spark.hadoop.hive.exec.dynamic.partition.mode", "nonstrict")
+                .config("spark.hadoop.hive.exec.max.dynamic.partitions", "100")
                 .getOrCreate();
     }
 }

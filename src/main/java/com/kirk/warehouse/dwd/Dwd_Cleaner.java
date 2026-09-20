@@ -14,7 +14,7 @@ public class Dwd_Cleaner {
 
         spark.sql("select user_id,item_id,category_id,behavior_type,ts,dt " +
                 "from (select *," +
-                "row_number() over(partition by user_id,behavior_type,ts order by ts desc) as rn " +
+                "row_number() over(partition by user_id,item_id,behavior_type,dt order by ts desc) as rn " +
                 "from ods.ods_user_behavior_log " +
                 "where user_id is not null and user_id != '' and item_id is not null " +
                 "and item_id != '' and category_id is not null and behavior_type is not null " +
@@ -31,6 +31,7 @@ public class Dwd_Cleaner {
         System.out.println(dt + "分区处理完成");
     }
     public static void main(String[] args){
+        System.setProperty("HADOOP_USER_NAME","kirk");
         SparkSession spark = SparkSessionUtil.getSession("dwd_clean");
 
         try {

@@ -1,19 +1,18 @@
-package com.kirk.warehouse.ads;
+package com.kirk;
 
-import com.kirk.warehouse.util.GenerateDateListUtil;
-import com.kirk.warehouse.util.SparkSessionUtil;
 import org.apache.spark.sql.SparkSession;
 
 import java.util.List;
 
-import static com.kirk.warehouse.scheduler.WholeProcessScheduler.dates;
+import static com.kirk.wholetest.dates;
 
-public class Ads_User_RFM_Level {
+
+public class adstest2 {
     public static void runFull (SparkSession spark,List<String> dates) {
         for (String dt : dates){
             System.out.println("开始处理分区：" + dt);
 
-            spark.sql("insert overwrite table ads.ads_user_rfm_level partition(dt = '" + dt + "')\n" +
+            spark.sql("insert overwrite table test.adstest2 partition(dt = '" + dt + "')\n" +
                     "select\n" +
                     "\tuser_id,\n" +
                     "\tr_value,\n" +
@@ -60,7 +59,7 @@ public class Ads_User_RFM_Level {
                     "\t\t\tdatediff('" + dt + "',max(case when buy_cnt > 0 then dt end)) as r_value,\n" +
                     "\t\t\tsum(buy_cnt) as f_value,\n" +
                     "\t\t\tsum(buy_cnt) as m_value\n" +
-                    "\t\tfrom dws.dws_user_behavior_day\n" +
+                    "\t\tfrom test.dwstest1\n" +
                     "\t\twhere dt <= '" + dt + "'\n" +
                     "\t\tgroup by user_id\n" +
                     "\t\thaving sum(buy_cnt) > 0\n" +
@@ -76,7 +75,7 @@ public class Ads_User_RFM_Level {
                     "\t'低价值' AS user_level\n" +
                     "from (\n" +
                     "\tselect user_id\n" +
-                    "\tfrom dws.dws_user_behavior_day\n" +
+                    "\tfrom test.dwstest1\n" +
                     "\twhere dt <= '" + dt + "'\n" +
                     "\tgroup by user_id\n" +
                     "\thaving sum(buy_cnt) = 0\n" +
@@ -87,14 +86,19 @@ public class Ads_User_RFM_Level {
     }
     public static void main (String[] args) {
         System.setProperty("HADOOP_USER_NAME","kirk");
-        SparkSession spark = SparkSessionUtil.getSession("spark");
+
+        SparkSession spark = SparkSession
+                .builder()
+                .master("local[*]")
+                .appName("spark")
+                .enableHiveSupport()
+                .getOrCreate();
 
         try {
             runFull(spark,dates);
-        } catch (Throwable t) {
+        } catch (Exception e) {
             System.err.println("ADS 层 RFM 分层失败");
-            t.printStackTrace();
-            System.exit(1);
+            e.printStackTrace();
         } finally {
             spark.stop();
         }

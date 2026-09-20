@@ -1,21 +1,23 @@
 package com.kirk;
 
-import org.apache.spark.SparkContext;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
+import com.kirk.warehouse.util.SparkSessionUtil;
 import org.apache.spark.sql.SparkSession;
 
 public class test {
     public static void main(String[] args) {
-        SparkSession sparkSession = SparkSession
+        System.setProperty("HADOOP_USER_NAME","kirk");
+        SparkSession spark = SparkSession
                 .builder()
-                .master("local[*]")
                 .appName("spark")
+                .master("local[*]")
+                .enableHiveSupport()
                 .getOrCreate();
-        Dataset<Row> csv = sparkSession.read().csv("C:\\Users\\34961\\Desktop\\UserBehavior.csv");
 
-        csv.createOrReplaceTempView("t1");
-
-        sparkSession.sql("select * from t1 limit 100").write().csv("output");
+        spark.sql("select count(1) from ods.ods_user_behavior_log").show();
+        spark.sql("select count(1) from dwd.dwd_user_behavior_detail").show();
+        spark.sql("select count(1) from dws.dws_user_behavior_day").show();
+        spark.sql("select count(1) from dws.dws_goods_sale_day").show();
+        spark.sql("select count(1) from ads.ads_core_metrics_day").show();
+        spark.sql("select count(1) from ads.ads_user_rfm_level").show();
     }
 }

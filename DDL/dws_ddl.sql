@@ -8,8 +8,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS dws.dws_user_behavior_day (
     pv_cnt      BIGINT      COMMENT '日浏览量',
     cart_cnt    BIGINT      COMMENT '日加购次数',
     fav_cnt     BIGINT      COMMENT '日收藏次数',
-    buy_cnt     BIGINT      COMMENT '日购买次数',
-    buy_amount  DECIMAL(10,2) COMMENT '日购买金额'
+    buy_cnt     BIGINT      COMMENT '日购买次数'
 )
 PARTITIONED BY (dt STRING COMMENT '日期分区')
 STORED AS ORC
