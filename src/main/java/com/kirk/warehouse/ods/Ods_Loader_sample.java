@@ -9,10 +9,10 @@ import org.apache.spark.sql.types.StructType;
 
 
 public class Ods_Loader_sample {
-    private static final StructType CSV_SCHEMA = new StructType()
-            .add("user_id", DataTypes.StringType)
-            .add("item_id", DataTypes.StringType)
-            .add("category_id", DataTypes.StringType)
+    public static final StructType CSV_SCHEMA = new StructType()
+            .add("user_id", DataTypes.LongType)
+            .add("item_id", DataTypes.LongType)
+            .add("category_id", DataTypes.IntegerType)
             .add("behavior_type", DataTypes.StringType)
             .add("ts", DataTypes.LongType);
 
