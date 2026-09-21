@@ -39,11 +39,6 @@ public class Ods_Loader_sample {
         // 4. 写入Hive ODS分区表
         sample.createOrReplaceTempView("tmp_ods_sample");
 
-        // 开启动态分区
-        spark.sql("set hive.exec.dynamic.partition=true");
-        // 关闭strict严格模式，允许全部分区都是动态
-        spark.sql("set hive.exec.dynamic.partition.mode=nonstrict");
-
         spark.sql("INSERT OVERWRITE TABLE ods.ods_user_behavior_log " +
                 "SELECT " +
                 "  user_id, item_id, category_id, behavior_type, ts, " +
